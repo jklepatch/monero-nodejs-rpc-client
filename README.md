@@ -23,8 +23,19 @@ mkdir -p node_modules
 git clone https://github.com/jklepatch/monero-nodejs-rpc-client
 mv monero-nodejs-rpc-client node_modules/monero-nodejs-rpc-client
 ```
+3. Install dependencies
+In your main project `package.json`, add this line
+under the `"dependencies"` key (create this key if it doesnt exist):
+```
+{
+  ...
+  "dependencies": {
+    "monero-nodejs-rpc-client": "./node_modules/monero-nodes-rpc-client"
+  }
+}
+```
 
-3. Require the rpc client into your project:
+4. Require the rpc client into your project:
 ```
 const rpcClientClass = require('monero-nodejs-rpc-client');
 const NODE_ADDRESS = 'http://[urltonode|iptonode]:port';
