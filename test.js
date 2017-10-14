@@ -243,3 +243,28 @@ describe('getHeight()', () => {
             .contain('"status": "OK"');
   });
 });
+
+describe('getTransactions()', () => {
+  it('should successfully retrieve a few transactions by hash with JSON', () => {
+    const txs_hashes = ["d6e48158472848e6687173a91ae6eebfa3e1d778e65252ee99d7515d63090408"];
+    const decode_as_json = true;
+    return expect(rpc.getTransactions({txs_hashes, decode_as_json}))
+            .to
+            .eventually
+            .contain("txs_as_hex")
+            .and
+            .contain('txs_as_json')
+            .and
+            .contain('"status": "OK"');
+  });
+  it('should successfully retrieve a few transactions by hash', () => {
+    const txs_hashes = ["d6e48158472848e6687173a91ae6eebfa3e1d778e65252ee99d7515d63090408"];
+    const decode_as_json = false;
+    return expect(rpc.getTransactions({txs_hashes, decode_as_json}))
+            .to
+            .eventually
+            .contain('txs_as_hex')
+            .and
+            .contain('"status": "OK"');
+  });
+});
