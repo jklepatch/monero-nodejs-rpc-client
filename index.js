@@ -113,7 +113,11 @@ class rpcClient {
    * @function getBlockTemplate
    * @description Get a block template for mining a block
    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblocktemplate 
-   * @param {int} reserveSize - Reserve size
+   * @param {object} args - 
+   *                       {
+   *                         wallet_address: {string} - required
+   *                         reserve_size: {integer} - required
+   *                       }
    * @returns {Promise} - Block templateExample: 
    *                      {
    *                        "id": "0",
@@ -127,8 +131,21 @@ class rpcClient {
    *                        "status": "OK"
    *                      }
    */
-   getBlockTemplate(walletAddress, reserveSize) {
-     return this._send('getblocktemplate', walletAddress, reserveSize);
+   getBlockTemplate(args) {
+     const errMess = `The argument should be an object with following fields:
+                      \`wallet_address\` {string} - required \n
+                      \`reserve_size\` {integer} = required`;
+     if(typeof args !== 'object'
+         || typeof args.wallet_address !== 'string'
+         || !args.wallet_address
+         || args.reserve_size === undefined 
+         || typeof args.reserve_size !== 'number'
+         || !Number.isInteger(args.reserve_size)) {
+       return new Promise((resolve, reject) => {
+         reject(new Error(errMess));
+       });
+     }
+     return this._send('getblocktemplate', args);
    }
   
    /**
@@ -160,7 +177,6 @@ class rpcClient {
     * @returns {Promise} - Example:
     */
    getBlockHeaderByHash(hash) {
-     hash = typeof hash === 'object' ? hash : {hash: hash};
      return this._send('getblockheaderbyhash', hash);
    }
 
