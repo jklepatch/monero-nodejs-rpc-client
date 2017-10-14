@@ -66,7 +66,7 @@ class rpcClient {
       } else {
         req.url = this.nodeAddress + '/' + method;
         try {
-          req.body= JSON.stringify({params});
+          req.body= JSON.stringify(params);
         }
         catch(err) {
           return reject(err);
@@ -389,7 +389,7 @@ class rpcClient {
     *                      }
     */
    getHeight() {
-     return this._send('getheight', undefined, true);
+     return this._send('getheight', undefined, false);
    }
 
    /**
@@ -407,7 +407,7 @@ class rpcClient {
     *                     }
     */
    getTransactions(txHashes, decodeAsJSON = false) {
-     return this._send('gettransactions', {tx_hashes: txHashes, decode_as_json: decodeAsJSON}, true);
+     return this._send('gettransactions', {tx_hashes: txHashes, decode_as_json: decodeAsJSON}, false);
    }
 
    /**
@@ -426,7 +426,7 @@ class rpcClient {
     *                      }
     */
    isKeyImageSpent(keyImages) {
-     return this._send('is_key_image_spent', {key_images: keyImages}, true);
+     return this._send('is_key_image_spent', {key_images: keyImages}, false);
    }
 
    /**
@@ -441,7 +441,7 @@ class rpcClient {
     *                       '{"tx_as_hex":"de6a3..."}
     */
    sendRawTransaction(txAsHex) {
-     return this._send('sendrawtransaction', {tx_as_hex: txAsHex}, true);
+     return this._send('sendrawtransaction', {tx_as_hex: txAsHex}, false);
    }
 
    /**
@@ -454,7 +454,7 @@ class rpcClient {
     *                      }
     */
    stopDaemon() {
-     return this._send('stop_daemon', undefined, true);
+     return this._send('stop_daemon', undefined, false);
    }
 }
 
