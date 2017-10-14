@@ -328,7 +328,7 @@ class rpcClient {
     *                         }
     *                      }
     */
-   HardForkInfo() {
+   hardForkInfo() {
      return this._send('hard_fork_info');
    }
 
