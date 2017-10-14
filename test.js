@@ -192,11 +192,54 @@ describe('getInfo()', () => {
   });
 });
 
+
 describe('hardForkInfo()', () => {
   it('should successfully retrieve hard fork info', () => {
     return expect(rpc.hardForkInfo())
             .to
             .eventually
             .contain('earliest_height');
+  });
+});
+
+/**
+ * Not possible to test this with moneroworld (make sense)
+ */
+//describe('setBans()', () => {
+//  it('should successfully bans a list of ips for a set duration', () => {
+//    const bans = {
+//      ip: 12.12.12.12,
+//      ban: true,
+//      seconds: 1000
+//    };
+//    return expect(rpc.setBans(bans))
+//            .to
+//            .eventually
+//            .contain('"status": "OK"');
+//  });
+//});
+
+/**
+ * Not possible to test this with moneroworld (make sense)
+ */
+//describe('getBans()', () => {
+//  it('should successfully retrieve list of banned nodes', () => {
+//    return expect(rpc.getBans())
+//            .to
+//            .eventually
+//            .contain('bans')
+//            .and
+//            .contain('"status": "OK"');
+//  });
+//});
+
+describe('getHeight()', () => {
+  it('should successfully retrieve the current height', () => {
+    return expect(rpc.getHeight())
+            .to
+            .eventually
+            .contain('height')
+            .and
+            .contain('"status": "OK"');
   });
 });
