@@ -441,8 +441,8 @@ class rpcClient {
     * @returns {Promise} - Example:
     *                       '{"tx_as_hex":"de6a3..."}
     */
-   sendRawTransaction(txAsHex) {
-     return this._send('sendrawtransaction', {tx_as_hex: txAsHex}, false);
+   sendRawTransaction({tx_as_hex}) {
+     return this._send('sendrawtransaction', {tx_as_hex}, false);
    }
 
    /**
