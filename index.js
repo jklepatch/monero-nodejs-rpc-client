@@ -159,8 +159,9 @@ class rpcClient {
     * @function getBlockHeaderByHash
     * @returns {Promise} - Example:
     */
-   getBlockHeaderByHash() {
-     return this._send('getlastblockheaderbyhash');
+   getBlockHeaderByHash(hash) {
+     hash = typeof hash === 'object' ? hash : {hash: hash};
+     return this._send('getblockheaderbyhash', hash);
    }
 
    /**
