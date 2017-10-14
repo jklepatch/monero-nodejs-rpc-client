@@ -191,3 +191,12 @@ describe('getInfo()', () => {
             .contain('top_block_hash');
   });
 });
+
+describe('hardForkInfo()', () => {
+  it('should successfully retrieve hard fork info', () => {
+    return expect(rpc.hardForkInfo())
+            .to
+            .eventually
+            .contain('earliest_height');
+  });
+});
