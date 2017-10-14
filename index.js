@@ -426,8 +426,8 @@ class rpcClient {
     *                        "status": "OK"
     *                      }
     */
-   isKeyImageSpent(keyImages) {
-     return this._send('is_key_image_spent', {key_images: keyImages}, false);
+   isKeyImageSpent({key_images}) {
+     return this._send('is_key_image_spent', {key_images}, false);
    }
 
    /**
