@@ -396,8 +396,9 @@ class rpcClient {
     * @function gettransactions
     * @description Look up one or more transactions by hash
     *              Link {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#gettransactions}
-    * @param {Array} txHashes - Array of transactions hashes
-    * @param {Bool} decodeAsJSON - Optional. If set true, the returned 
+    * @param {Object} args - {
+    *                          {Array} txHashes - Array of transactions hashes
+    *                          {Bool} decodeAsJSON - Optional. If set true, the returned 
     *                               transaction information will be decoded rather than binary.
     * @returns {Promise} - Arrays of HEX and JSON representations of transactions. Example:
     *                     {
@@ -406,8 +407,8 @@ class rpcClient {
     *                       "txs_as_json": ["..."]
     *                     }
     */
-   getTransactions(txHashes, decodeAsJSON = false) {
-     return this._send('gettransactions', {tx_hashes: txHashes, decode_as_json: decodeAsJSON}, false);
+   getTransactions({txs_hashes, decode_as_json = true}) {
+     return this._send('gettransactions', {txs_hashes, decode_as_json}, false);
    }
 
    /**
