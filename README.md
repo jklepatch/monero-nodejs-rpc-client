@@ -57,6 +57,42 @@ var blockCount = rpcClient.getBlockCount();
 var blockHash = rpcClient.onGetBlockHash(1000);
 ```
 
+## Testing
+
+Testing is done with `mocha`, `chai` and `chai-as-promised` to test promises.
+
+To run the tests:
+
+```
+npm run test
+```
+
+The tests are located in the `tests.js` file. They perform actual API calls to the monero network through moneroworld. In order to prevent the tests from failing because of a timeout, tests are run with a `timeout` option of 10s. Tests can still fail if moneroworld servers are too slow.
+
+If you want to just run one set of test (i.e a `describe` block), you can do so with this command:
+```. In order to prevent the tests from failing because of a timeout, tests are run with a `timeout` option of 10s. Tests can still fail ifmoneroworld servers are too slow.
+
+If you want to just run one set of test (i.e a `describe` block), for let's say the `getBlockTemplate() function, you can do so with this command:
+
+```
+./node_modules/mocha/bin/mocha --grep getBlockTemplate --timeout 10000
+```
+
+You can be even more specific by adding `only` to the individual tests. Example for `getInfo()`:
+
+```
+describe('getInfo()', () => {
+  it.only('should successfully retrieve information about the network', () => {
+    return expect(rpc.getInfo())
+            .to
+            .eventually
+            .contain('"status": "OK"')
+            .and
+            .contain('top_block_hash');
+  });
+});
+```
+
 ## License
 
 This project is licensed under the MIT License
