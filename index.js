@@ -375,7 +375,7 @@ class rpcClient {
     *                       '{"tx_as_hex":"de6a3..."}
     */
    sendRawTransaction(txAsHex) {
-     return this._send('sendrawtransaction', tx_as_hex: txAsHex, true);
+     return this._send('sendrawtransaction', {tx_as_hex: txAsHex}, true);
    }
 
    /**
