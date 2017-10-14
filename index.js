@@ -142,7 +142,7 @@ class rpcClient {
     * @returns {Promise} - Example:
     */
    submitBlock(blockBlob) {
-     return this._send('submitblock');
+     return this._send('submitblock', blockblob);
    }
 
    /**
