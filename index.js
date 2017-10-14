@@ -82,10 +82,10 @@ class rpcClient {
   /**
    * @function getBlockCount
    * @description Look up how many blocks are in the longest chain known to the node.
-   *              Link:  https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblockcount
-   * @returns {Promise} - Example: 
+   *              Link:  {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblockcount}
+   * @returns {Promise} - Block count. Example: 
    *                      {  
-   *                        "count": 993<t_co>3,  
+   *                        "count": 9933,  
    *                        "status": "OK"  
    *                      }  
    */
@@ -96,7 +96,7 @@ class rpcClient {
   /**
    * @function onGetBlockHash
    * @description Look up a block's hash by its height.
-   *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#on_getblockhash 
+   *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#on_getblockhash} 
    * @param {int} height - height of the block we want to find
    * @returns {Promise} - Block hash. Example:
    *                      {
@@ -112,13 +112,13 @@ class rpcClient {
   /*
    * @function getBlockTemplate
    * @description Get a block template for mining a block
-   *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblocktemplate 
+   *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblocktemplate} 
    * @param {object} args - 
    *                       {
    *                         wallet_address: {string} - required
    *                         reserve_size: {integer} - required
    *                       }
-   * @returns {Promise} - Block templateExample: 
+   * @returns {Promise} - Block template as a string blob, as well as related metadata. Example: 
    *                      {
    *                        "id": "0",
    *                        "jsonrpc": "2.0",
@@ -149,14 +149,20 @@ class rpcClient {
    }
   
    /**
-    * @TODO: functions below need to be documented and tested
-    */
-
-   /**
     * @function submitBlock
-    * @description
-    * @params
-    * @returns {Promise} - Example:
+    * @description Submit a mined block to the network
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#submitblock}
+    * @params {string} blockBlob - hexadecimal string representing the block blob
+    * @returns {Promise} - Status field of the response indicate the result. 
+    *                      "OK" means block was accepted.
+    *                      Example:
+    *                      {  
+    *                        "id": "0",  
+    *                        "jsonrpc": "2.0",  
+    *                        "result": {  
+    *                          "status": "OK"  
+    *                        }  
+    *                      }  
     */
    submitBlock(blockBlob) {
      return this._send('submitblock', blockblob);
@@ -164,30 +170,11 @@ class rpcClient {
 
    /**
     * @function getLastBlockHeader
-    * @description
-    * @params
-    * @returns {Promise} - Example:
-    */
-   getLastBlockHeader() {
-     return this._send('getlastblockheader');
-   }
-
-   /**
-    * @function getBlockHeaderByHash
-    * @returns {Promise} - Example:
-    */
-   getBlockHeaderByHash(hash) {
-     return this._send('getblockheaderbyhash', hash);
-   }
-
-   /**
-    * @function getBlockHeaderByHeight
-    * @description Similar to getblockheaderbyhash above, this method 
-    *              includes a block's height as an input parameter to 
-    *              retrieve basic information about the block
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblockheaderbyheight
-    * @params {int} height - The height of the requested block
-    * @returns {Promise} - Example:
+    * @description Block header information for the most recent block is easily 
+    *              retrieved with this method. No inputs are needed.
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getlastblockheader}
+    * @returns {Promise} - JSON representation of block header
+    *                      Example:
     *                      {
     *                        "id": "0",
     *                        "jsonrpc": "2.0",
@@ -209,6 +196,31 @@ class rpcClient {
     *                        }
     *                      }
     */
+   getLastBlockHeader() {
+     return this._send('getlastblockheader');
+   }
+
+   /**
+    * @function getBlockHeaderByHash
+    * @description Block header information can be retrieved using either a block's hash or height. 
+    *              This method includes a block's hash as an input parameter to retrieve basic 
+    *              information about the block.
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblockheaderbyhash}
+    * @returns {Promise} - JSON representation of block header. See {@link getLastBlockHeader} for details.
+    */
+   getBlockHeaderByHash(hash) {
+     return this._send('getblockheaderbyhash', hash);
+   }
+
+   /**
+    * @function getBlockHeaderByHeight
+    * @description Similar to getblockheaderbyhash above, this method 
+    *              includes a block's height as an input parameter to 
+    *              retrieve basic information about the block
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblockheaderbyheight}
+    * @params {int} height - The height of the requested block
+    * @returns {Promise} - JSON representation of block header. See {@link getLastBlockHeader} for details.
+    */
    getBlockHeaderByHeight(height) {
      return this._send('getblockheaderbyheight');
    }
@@ -219,9 +231,8 @@ class rpcClient {
     *              either block height or hash, like with the above 
     *              block header calls. For full block information, both 
     *              lookups use the same method, but with different input parameters.
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblock
-    * @param {Int} height -
-    * @param {String} hash -
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getblock}
+    * @param {number|string} height - An integer or a hash representing the block
     * @returns {Promise}
     */
    getBlock(height, hash) {
@@ -231,8 +242,8 @@ class rpcClient {
    /**
     * @function getConnections
     * @description Retrieve information about incoming and outgoing connections to your node
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#get_connections
-    * @returns {Promise} - Example:
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#get_connections}
+    * @returns {Promise} - JSON representation of connections. Example:
     *                      {
     *                        "id": "0",
     *                        "jsonrpc": "2.0",
@@ -269,7 +280,7 @@ class rpcClient {
    /**
     * @function getInfo
     * @description Retrieve general information about the state of your node and the network.
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#get_info
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#get_info}
     * @returns {Promise} - Example:
     *                      {
     *                        "id": "0",
@@ -299,8 +310,23 @@ class rpcClient {
    /**
     * @function hardForkInfo
     * @description Look up information regarding hard fork voting and readiness.
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#hard_fork_info 
-    * @returns {Promise} - Example:
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#hard_fork_info 
+    * @returns {Promise} - JSON representation of the current hard fork info. Example:
+    *                      {
+    *                        "id": "0",
+    *                        "jsonrpc": "2.0",
+    *                        "result": {
+    *                          "earliest_height": 1009827,
+    *                          "enabled": false,
+    *                          "state": 2,
+    *                          "status": "OK",
+    *                          "threshold": 0,
+    *                          "version": 1,
+    *                          "votes": 7277,
+    *                          "voting": 2,
+    *                          "window": 10080
+    *                         }
+    *                      }
     */
    HardForkInfo() {
      return this._send('hard_fork_info');
@@ -309,9 +335,17 @@ class rpcClient {
    /**
     * @function setBans
     * @description Ban another node by IP
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#setbans
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#setbans}
     * @param {BanList} - List of nodes to be banned
-    * @returns {Promise} - Example:
+    * @returns {Promise} - Status field indicates the result of the operation.
+    *                      "OK" means the ban was succesfully. Example:
+    *                      {
+    *                        "id": "0",
+    *                        "jsonrpc": "2.0",
+    *                        "result": {
+    *                          "status": "OK"
+    *                        }
+    *                      }
     */
    setBans(nodes) {
      if(typeof nodes != BanList) throw new Err("Monero Client: setBans() expect a instance of BanList as argument");
@@ -321,8 +355,9 @@ class rpcClient {
    /**
     * @function getBans
     * @description Returns the list of currently banned nodes
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#getbans
-    * @returns {Promise} - Example:
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getbans}
+    * @returns {Promise} - JSON representation of the current bans.
+    *                      `seconds` represents the remaining time until ban expire. Example:
     *                      {
     *                        "id": "0",
     *                        "jsonrpc": "2.0",
@@ -346,7 +381,7 @@ class rpcClient {
    /**
     * @function getHeight
     * @description Get the node's current height
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#getheight
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#getheight}
     * @returns {Promise} - Example:
     *                      {
     *                        "height": 993488,
@@ -360,11 +395,16 @@ class rpcClient {
    /**
     * @function gettransactions
     * @description Look up one or more transactions by hash
-    *              Link https://getmonero.org/resources/developer-guides/daemon-rpc.html#gettransactions
-    * @params {Array} txHashes - Array of transactions hashes
-    * @params {Bool} decodeAsJSON - Optional. If set true, the returned 
+    *              Link {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#gettransactions}
+    * @param {Array} txHashes - Array of transactions hashes
+    * @param {Bool} decodeAsJSON - Optional. If set true, the returned 
     *                               transaction information will be decoded rather than binary.
-    * @returns {Promise} - Example:
+    * @returns {Promise} - Arrays of HEX and JSON representations of transactions. Example:
+    *                     {
+    *                       "status": "OK",
+    *                       "txs_as_hex": ["..."],
+    *                       "txs_as_json": ["..."]
+    *                     }
     */
    getTransactions(txHashes, decodeAsJSON = false) {
      return this._send('gettransactions', {tx_hashes: txHashes, decode_as_json: decodeAsJSON}, true);
@@ -373,8 +413,17 @@ class rpcClient {
    /**
     * @function isKeyImageSpent
     * @params {Array} keyImages - Array of key images to check for
-    *                             Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#iskeyimagespent
-    * @returns {Promise} - Example:
+    *                             Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#iskeyimagespent}
+    * @returns {Promise} -  List of statuses for each image checked. 
+    *                       Statuses are as follow: 
+    *                         0 = unspent, 
+    *                         1 = spent in blockchain, 
+    *                         2 = spent in transaction pool
+    *                       Example:
+    *                      {
+    *                        "spent_status": [1,2],
+    *                        "status": "OK"
+    *                      }
     */
    isKeyImageSpent(keyImages) {
      return this._send('is_key_image_spent', {key_images: keyImages}, true);
@@ -386,7 +435,7 @@ class rpcClient {
     * @description Show information about valid transactions seen by the node 
     *              but not yet mined into a block, as well as spent key image 
     *              information in the node's memory.
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#send_raw_transaction
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#send_raw_transaction}
     * @param {String} txAsHex: Full Transaction as hexadecimal string
     * @returns {Promise} - Example:
     *                       '{"tx_as_hex":"de6a3..."}
@@ -398,8 +447,11 @@ class rpcClient {
    /**
     * @function stopDaemon
     * @description Send a command to the daemon to safely disconnect and shut down.
-    *              Link: https://getmonero.org/resources/developer-guides/daemon-rpc.html#stopdaemon
-    * @returns {Promise} - Example:
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#stopdaemon}
+    * @returns {Promise} - Answer with a status "OK" for successfull stop. Example:
+    *                      {
+    *                        "status": "OK"
+    *                      }
     */
    stopDaemon() {
      return this._send('stop_daemon', undefined, true);
