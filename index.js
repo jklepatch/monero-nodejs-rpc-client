@@ -128,7 +128,7 @@ class rpcClient {
    *                      }
    */
    getBlockTemplate(walletAddress, reserveSize) {
-     return this._send('getBlockTemlate', walletAddress, reserveSize);
+     return this._send('getblocktemplate', walletAddress, reserveSize);
    }
   
    /**
