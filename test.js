@@ -268,3 +268,15 @@ describe('getTransactions()', () => {
             .contain('"status": "OK"');
   });
 });
+
+describe('isKeyImageSpent()', () => {
+  it('should successfully retrieve the spend status of an array of key images', () => {
+    const key_images = ["8d1bd8181bf7d857bdb281e0153d84cd55a3fcaa57c3e570f4a49f935850b5e3","7319134bfc50668251f5b899c66b005805ee255c136f0e1cecbb0f3a912e09d4"];
+    return expect(rpc.isKeyImageSpent({key_images}))
+            .to
+            .eventually
+            .contain('spent_status')
+            .and
+            .contain('"status": "OK"');
+  });
+});
