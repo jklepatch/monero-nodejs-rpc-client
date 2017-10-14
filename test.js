@@ -280,3 +280,16 @@ describe('isKeyImageSpent()', () => {
             .contain('"status": "OK"');
   });
 });
+
+/**
+ * @TODO: Build a tx_as_hex to test
+ */
+//describe('sendRawTransaction()', () => {
+//  it('should successfully send a raw transaction', () => {
+//    const tx_as_hex = "ae634..";
+//    return expect(rpc.sendRawTransaction({tx_as_hex}))
+//            .to
+//            .eventually
+//            .contain('"status": "OK"');
+//  });
+//});
