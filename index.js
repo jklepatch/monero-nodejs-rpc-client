@@ -38,33 +38,16 @@ class rpcClient {
    */
   _send(method, params = undefined, isJSONRPC = true) {
     return new Promise((resolve, reject) =>  {
-      const req = {};
+      var req = {};
       /**
        * Some RPC method follows JSON RPC calling conventions (first branch of the if)
        * Some others follow another calling convention (second branch of the if);
        */
-      if(isJSONRPC) {
-        req.url = this.nodeAddress + '/json_rpc';
-        try {
-          const payload = JSON.stringify({
-            jsonrpc: "2.0",
-            id: "0",
-            method: method,
-            params: params
-          });
-          req.body = payload;
-        }
-        catch(err) {
-          return reject(err);
-        }
-      } else {
-        req.url = this.nodeAddress + '/' + method;
-        try {
-          req.body= JSON.stringify(params);
-        }
-        catch(err) {
-          return reject(err);
-        }
+      try {
+        req = isJSONRPC ? this._buildJSONRPCReq(method, params) : this._buildOtherRPCReq(method, params)
+      } 
+      catch(err) {
+        return reject(err);
       }
       request.post(req, function(err, req, data) {
         if(err) return reject(err);
@@ -77,6 +60,39 @@ class rpcClient {
         }
       });
     });
+  }
+
+  _buildJSONRPCReq(method, params) {
+    const req = {};
+    req.url = this.nodeAddress + '/json_rpc';
+    try {
+      const payload = JSON.stringify({
+        jsonrpc: "2.0",
+        id: "0",
+        method: method,
+        params: params
+      });
+      req.body = payload;
+      return req;
+    }
+    catch(err) {
+      //Will probably want to create custom errors at some point
+      //That's we try/catch and rethrow here
+      throw new Error(err);
+    }
+  }
+
+  _buildOtherRPCReq(method, params) {
+    const req = {};
+    req.url = this.nodeAddress + '/' + method;
+    if(typeof params === 'undefined') return req;
+    try {
+      req.body= JSON.stringify(params);
+      return req;
+    }
+    catch(err) {
+      throw new Error(err);
+    }
   }
   
   /**
