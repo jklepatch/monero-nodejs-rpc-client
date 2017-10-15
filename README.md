@@ -1,7 +1,7 @@
 # Monero NodeJS RPC Client
 
-RPC client written for Monero, written in Javascript with Nodejs.
-It accepts JSON as inputs and provides JSON as output, wrapped in
+Monero RPC client written with Nodejs.
+It produces JSON objects or strings as output, wrapped in
 native promises.
 
 All RPC calls are defined here:
@@ -9,33 +9,17 @@ https://getmonero.org/resources/developer-guides/daemon-rpc.html
 
 ## Getting Started
 
-1. Create a `node_modules` directory inside your project, if none:
+1. Install the npm package:Create a `node_modules` directory inside your project, if none:
+
 ```
 cd yourproject
-mkdir -p node_modules
+npm install -S monero-rpc-client
 ```
 
-2. Clone the repo into your project `node_modules` directory:
-```
-git clone https://github.com/jklepatch/monero-nodejs-rpc-client
-mv monero-nodejs-rpc-client node_modules/monero-nodejs-rpc-client
-```
-3. Install dependencies
-In your main project `package.json`, add this line
-under the `"dependencies"` key (create this key if it doesnt exist):
-```
-{
-  ...
-  "dependencies": {
-    "monero-nodejs-rpc-client": "./node_modules/monero-nodes-rpc-client"
-  }
-}
-```
-
-4. Require the RPC client into your project:
+2. Require the RPC client into your project:
 
 ```
-const rpcClientClass = require('monero-nodejs-rpc-client');
+const rpcClientClass = require('monero-rpc-client');
 const NODE_ADDRESS = 'http://[urltonode|iptonode]:port';
 //decodeJSON is an optional boolean argument. 
 //When set to true (default), the JSON string response is
@@ -43,7 +27,7 @@ const NODE_ADDRESS = 'http://[urltonode|iptonode]:port';
 const rpcClient = new rpcClientClass(NODE_ADDRESS [, decodeJSON]);
 ```
 
-5. Use methods attached to `rpcClient` to send RPC calls:
+3. Use methods attached to `rpcClient` to send RPC calls:
 
 ### Example
 ```
