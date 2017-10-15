@@ -5,7 +5,7 @@
   "author": "Julien Klepatch",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jklepatch/monero-rpc-client-js.git"
+    "url": "https://github.com/jklepatch/monero-nodejs-rpc-client.git"
   },
   "license": "MIT",
   "scripts": {
