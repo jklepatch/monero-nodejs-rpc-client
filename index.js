@@ -13,18 +13,9 @@ class rpcClient {
    * @param {string} nodeAddress - The full address of the daemon node to connect to
    *                               Example1: 'http://mynodeurl:30400'
    *                               Example2: 'http://12.34.345.12:30400'
-   * @param {string} walletAddress - A Monero wallet address used in certain method calls.
-   *
-   *                                 For example, it used in `getBlockTemplate` to know
-   *                                 which wallet will receive the coinbase transaction
-   *                                 if the block is succesfully mined.
-   *
-   *                                 For testing, a Monero wallet can be created easily
-   *                                 on https://moneroaddress.org
    */
-  constructor(nodeAddress, walletAddress) {
+  constructor(nodeAddress) {
     this.nodeAddress = nodeAddress;
-    this.walletAddress = walletAddress;
   }
   
   /**
