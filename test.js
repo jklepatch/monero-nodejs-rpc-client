@@ -304,3 +304,15 @@ describe('getTransactionPool()', () => {
             .contain('"status": "OK"');
   });
 });
+
+/**
+ * Cannot test this with moneroworld"
+ */
+//describe('stop_daemon', () => {
+//  it('should successfully stop the daemon', () => {
+//    return expect(rpc.stopDaemon())
+//            .to
+//            .eventually
+//            .contain('"status": "OK"');
+//  });
+});
