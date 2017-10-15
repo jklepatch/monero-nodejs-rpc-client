@@ -1,7 +1,7 @@
 /**
  * Require and instantiate the rpc client
  */
-//In your code it will be RpcClientClass = require('monero-nodejs-rpc-client');
+//In your code it will be RpcClientClass = require('monero-rpc-client');
 const RpcClientClass = require('./main.js');
 
 //If you don't have any daemon node setup,
