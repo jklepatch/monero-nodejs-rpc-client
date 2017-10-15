@@ -10,13 +10,23 @@ const expect = chai.expect;
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-describe('rpcClient Class', () => {
-  it('should instantiate correctly', () => {
-    const rpc = new rpcClass('MyNodeAddress', 'MyWalletAddress');
+describe('rpcClient', () => {
+  it('should instantiate correctly with 1 parameter', () => {
+    const rpc = new rpcClass('MyNodeAddress');
     expect(rpc).to.have.property('nodeAddress', 'MyNodeAddress');
-    expect(rpc).to.have.property('walletAddress', 'MyWalletAddress');
+    expect(rpc).to.have.property('deserializeJSON', true);
   });
-});
+  it('should instantiate correctly with 2 parameters, deserializeJSON set to true', () => {
+    const rpc = new rpcClass('MyNodeAddress', true);
+    expect(rpc).to.have.property('nodeAddress', 'MyNodeAddress');
+    expect(rpc).to.have.property('deserializeJSON', true);
+  });
+  it('should instantiate correctly with 2 parameters, deserializeJSON set to false', () => {
+    const rpc = new rpcClass('MyNodeAddress', false);
+    expect(rpc).to.have.property('nodeAddress', 'MyNodeAddress');
+    expect(rpc).to.have.property('deserializeJSON', false);
+  });
+})
 
 describe('getBlockCount()', () => {
   it('should retrieve block count', () => {
