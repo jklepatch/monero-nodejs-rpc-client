@@ -446,6 +446,41 @@ class rpcClient {
    }
 
    /**
+    * @function getTransactionPool
+    *
+    * @description Show information about valid transactions seen by the node but
+    *              not yet mined into a block, as well as spent key image information 
+    *              in the node's memory. 
+    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#get_transaction_pool}
+    * @returns {Promise} - JSON representation of transaction pool. Contain metadata about the pool,
+    *                      as well as array of transactions and spent key images.
+    *                      Example:
+    *                      {
+    *                        "spent_key_images": [{
+    *                           "id_hash": "1edb9ecc3c...",
+    *                           "txs_hashes": ["409911b3..."]
+    *                            },{...}, ...]
+    *                         "status": "OK",
+    *                         "transactions": [{
+    *                           "blob_size": 25761,
+    *                           "fee": 290000000000,
+    *                           "id_hash": "11d4cff23e6...",
+    *                           "kept_by_block": false,
+    *                           "last_failed_height": 0,
+    *                           "last_failed_id_hash": "00000000000...",
+    *                           "max_used_block_height": 954508,
+    *                           "max_used_block_id_hash": "03f96b374778...",
+    *                           "receive_time": 1457676127,
+    *                           "tx_json": "{....}"
+    *                         }]
+    *                       }]
+    *                     }
+    */
+   getTransactionPool() {
+     return this._send('get_transaction_pool', undefined, false);
+   }
+
+   /**
     * @function stopDaemon
     * @description Send a command to the daemon to safely disconnect and shut down.
     *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#stopdaemon}

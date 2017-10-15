@@ -293,3 +293,14 @@ describe('isKeyImageSpent()', () => {
 //            .contain('"status": "OK"');
 //  });
 //});
+
+describe('getTransactionPool()', () => {
+  it('should successfully retrieve the transaction pool', () => {
+    return expect(rpc.getTransactionPool())
+            .to
+            .eventually
+            .contain('transactions')
+            .and
+            .contain('"status": "OK"');
+  });
+});
