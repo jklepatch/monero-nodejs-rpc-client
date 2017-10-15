@@ -81,7 +81,7 @@ describe('getBlockCount()', () => {
   });
 });
 
-describe('on_getblockhash()', () => {
+describe('onGetblockHash()', () => {
   it('should retrieve block hash', () => {
     return expect(rpc.onGetBlockHash(1000))
             .to
