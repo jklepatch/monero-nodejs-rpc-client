@@ -28,6 +28,48 @@ describe('rpcClient', () => {
   });
 })
 
+describe('_buildJSONRPCReq()', () => {
+  it('should successfully build a request for RPC method without parameters', () => {
+    const rpc = new rpcClass("MyNodeAddress");
+    const req = rpc._buildJSONRPCReq('getblockcount', undefined)
+    const expectedReq = {
+      url: 'MyNodeAddress/json_rpc',
+      body: '{"jsonrpc":"2.0","id":"0","method":"getblockcount"}'
+    };
+    expect(req).to.deep.equal(expectedReq);
+  });
+  it('should successfully build a request for RPC method with parameters', () => {
+    const rpc = new rpcClass("MyNodeAddress1");
+    const req = rpc._buildJSONRPCReq('on_getblockhash', [1000])
+    const expectedReq = {
+      url: 'MyNodeAddress1/json_rpc',
+      body: '{"jsonrpc":"2.0","id":"0","method":"on_getblockhash","params":[1000]}'
+    };
+    expect(req).to.deep.equal(expectedReq);
+  });
+});
+
+describe('_buildOtherRPCReq()', () => {
+  it('should successfully build a request for Other RPC method without parameters', () => {
+    const rpc = new rpcClass("MyNodeAddress");
+    const req = rpc._buildOtherRPCReq('getheight', undefined)
+    const expectedReq = {
+      url: 'MyNodeAddress/getheight',
+    };
+    expect(req).to.deep.equal(expectedReq);
+  });
+  it('should successfully build a request for Other RPC method with parameters', () => {
+    const rpc = new rpcClass("MyNodeAddress1");
+    const req = rpc._buildOtherRPCReq('gettransactions', 
+        {txs_hashes: ["d6e48158472848e6687173a91ae6eebfa3e1d778e65252ee99d7515d63090408"]})
+    const expectedReq = {
+      url: 'MyNodeAddress1/gettransactions',
+      body: '{"txs_hashes":["d6e48158472848e6687173a91ae6eebfa3e1d778e65252ee99d7515d63090408"]}'
+    };
+    expect(req).to.deep.equal(expectedReq);
+  });
+});
+
 describe('getBlockCount()', () => {
   it('should retrieve block count', () => {
     return expect(rpc.getBlockCount())
