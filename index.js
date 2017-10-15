@@ -13,9 +13,12 @@ class rpcClient {
    * @param {string} nodeAddress - The full address of the daemon node to connect to
    *                               Example1: 'http://mynodeurl:30400'
    *                               Example2: 'http://12.34.345.12:30400'
+   * @param {bool} deserializeJSON - Whether to deserialize monero responses
+   *                                 as JSON objects. Default to true.
    */
-  constructor(nodeAddress) {
+  constructor(nodeAddress, deserializeJSON = true) {
     this.nodeAddress = nodeAddress;
+    this.deserializeJSON = deserializeJSON;
   }
   
   /**
@@ -65,7 +68,13 @@ class rpcClient {
       }
       request.post(req, function(err, req, data) {
         if(err) return reject(err);
-        resolve(data);
+        if(!this.deserializeJSON) return resolve(data);
+        try {
+          return resolve(JSON.parse(data))
+        }
+        catch(err) {
+          reject(err);
+        }
       });
     });
   }
