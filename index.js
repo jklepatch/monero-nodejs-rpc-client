@@ -494,27 +494,4 @@ class rpcClient {
    }
 }
 
-/**
- * @class BanList
- * @description Represent a node to ban.
- *              Used as `setbans()` argument.
- */
-class BanList {
-  constructor() {
-    this.bans = [];
-  }
-  add(ip, ban, seconds) {
-    const entry = {
-      ip: ip,
-      ban: ban,
-      seconds: seconds
-    };
-    this.bans.push(entry);
-  }
-}
-
-/*
- * @TODO: expose properly BanList and rpcClient
- */
-//module.exports = banList;
 module.exports = rpcClient;
