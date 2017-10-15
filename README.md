@@ -136,6 +136,13 @@ describe('getInfo()', () => {
   });
 });
 ```
+## Possible future features
+* Caching of some responses
+    * First with javascript objects
+    * Then with some external db, like Redis or SQLLite
+* Make the library Isomorphic, i.e work in web-browsers as well
+* Make the method calls also support callbacks
+* Setup automated testing with travis. Will need first to build a mock object for Monero to have deterministic tests
 
 ## License
 
