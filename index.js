@@ -51,7 +51,7 @@ class rpcClient {
       catch (err) {
         return reject(err);
       }
-      request.post(req, function (err, req, data) {
+      request.post(req, (err, req, data) => {
         if (err) { return reject(err); }
         if (!this.deserializeJSON) { return resolve(data); }
         try {
