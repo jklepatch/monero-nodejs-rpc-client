@@ -246,6 +246,14 @@ class rpcClient {
     return this._send('getblockheaderbyheight');
   }
 
+  getOuts (params) {
+    return this._send('get_outs', {outputs: params}, false);
+  }
+
+  getOutputHistogram (params) {
+    return this._send('get_output_histogram', params);
+  }
+
   /**
    * @function getBlock
    * @description Full block information can be retrieved by
