@@ -338,6 +338,35 @@ class rpcClient {
   }
 
   /**
+   * @function getFee
+   * @description Retrieve estimated fee of the network
+   * @returns {Promise} - Example:
+   *                      {
+   *                        "id": "0",
+   *                        "jsonrpc": "2.0",
+   *                        "result": {
+   *                          "alt_blocks_count": 5,
+   *                          "difficulty": 5250,
+   *                          "grey_peerlist_size": 2280,
+   *                          "height": 993145,
+   *                          "incoming_connections_count": 0,
+   *                          "outgoing_connections_count": 8,
+   *                          "status": "OK",
+   *                          "target": 60,
+   *                          "target_height": 993137,
+   *                          "testnet": false,
+   *                          "top_block_hash": "",
+   *                          "tx_count": 564287,
+   *                          "tx_pool_size": 45,
+   *                          "white_peerlist_size": 529
+   *                         }
+   *                       }
+   */
+  getFee () {
+    return this._send('get_fee_estimate');
+  }
+
+  /**
    * @function hardForkInfo
    * @description Look up information regarding hard fork voting and readiness.
    *              Link: {@link https://getmonero.org/resources/developer-guides/daemon-rpc.html#hard_fork_info
