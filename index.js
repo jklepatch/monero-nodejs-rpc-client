@@ -46,7 +46,9 @@ class rpcClient {
        * Some others follow another calling convention (second branch of the if);
        */
       try {
-        req = isJSONRPC ? this._buildJSONRPCReq(method, params) : this._buildOtherRPCReq(method, params)
+
+        req = isJSONRPC ? this._buildJSONRPCReq(method, params) : this._buildOtherRPCReq(method, params);
+
       }
       catch (err) {
         return reject(err);
@@ -55,7 +57,60 @@ class rpcClient {
         if (err) { return reject(err); }
         if (!this.deserializeJSON) { return resolve(data); }
         try {
-          return resolve(JSON.parse(data))
+          let res = {};
+
+          res = JSON.parse(data);
+
+
+          if (res.status === 'Failed') {
+            reject(new Error(res.reason));
+          } else {
+            resolve(res);
+          }
+        }
+        catch (err) {
+          reject(err);
+        }
+      });
+    });
+  }
+
+   /**
+   * @function _binSend
+   * @description Send a binary request to the daemon
+   * @private
+   * @param {string} method - the name of the RPC method
+   * @param {object|array} params - Parameters to be passed to the RPC method
+   * @returns {Promise} - A Promise which is resolved if the request succesfully
+   *                      fetch the data, and rejected otherwise. Failure can happen
+   *                      either because of a problem of the request, or before the
+   *                      request happen, when `JSON.stringify` fails
+   */
+  _binSend (method, params = undefined, responseParser = (res) => res) {
+    return new Promise((resolve, reject) =>  {
+      var req = {};
+
+      /**
+       * Some RPC method follows JSON RPC calling conventions (first branch of the if)
+       * Some others follow another calling convention (second branch of the if);
+       */
+      try {
+        req = this._buildBinRPCReq(method, params);
+      }
+      catch (err) {
+        return reject(err);
+      }
+      request.post(req, (err, req, data) => {
+        if (err) { return reject(err); }
+        if (!this.deserializeJSON) { return resolve(data); }
+        try {
+          const res = responseParser(data);
+
+          if (res.status === 'Failed') {
+            reject(new Error(res.reason));
+          } else {
+            resolve(res);
+          }
         }
         catch (err) {
           reject(err);
@@ -93,6 +148,20 @@ class rpcClient {
     if (typeof params === 'undefined') { return req; }
     try {
       req.body = JSON.stringify(params);
+      return req;
+    }
+    catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  _buildBinRPCReq (method, params) {
+    const req = {};
+    req.url = `${this.nodeAddress}/${method}`;
+    req.encoding = null;
+    if (typeof params === 'undefined') { return req; }
+    try {
+      req.body = params;
       return req;
     }
     catch (err) {
@@ -252,6 +321,49 @@ class rpcClient {
 
   getOutputHistogram (params) {
     return this._send('get_output_histogram', params);
+  }
+
+  get_tx_outputs_gindexs (txid) {
+    const buffer = Buffer.allocUnsafe(50);
+
+    buffer.writeUInt32LE(16847105, 0);
+    buffer.writeUInt32LE(16908545, 4);
+    buffer.writeUInt8(1, 8);// Signature
+
+    buffer.writeUInt8(4, 9); // Type short XOR amount of params = Monero's Magic
+    buffer.writeUInt8(4, 10);
+
+    buffer.write("txid", 11);
+    buffer.writeUInt8(10, 15);
+    buffer.writeUInt8(128, 16);
+    buffer.write(txid, 17, "hex");
+
+    const parser = (response) => {
+      // Over simplified
+      const status = response.toString('ascii', response.length - 2, response.length);
+
+      const indexes = [];
+      let read_index = 22;
+      const count = response.readUInt8(21) >> 2;
+      const size = 8;
+
+      while (read_index < 22 + count * size) {
+        const index = response.readUInt8(read_index);
+        indexes.push(index);
+        read_index += 8;
+      }
+
+      return {
+        status,
+        indexes
+      };
+    };
+
+    return this._binSend('get_o_indexes.bin', buffer, parser);
+  }
+
+  validate_bin_status (response) {
+
   }
 
   /**
