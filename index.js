@@ -1,5 +1,6 @@
 /* @flow */
 const net = require('net');
+const Long = require('long');
 const request = require('request');
 
 /**
@@ -324,6 +325,7 @@ class rpcClient {
     return this._send('get_output_histogram', params);
   }
 
+
   get_tx_outputs_gindexs (txid) {
     const buffer = Buffer.allocUnsafe(50);
 
@@ -348,10 +350,12 @@ class rpcClient {
       const count = response.readUInt8(21) >> 2;
       const size = 8;
 
+      read_index = 22;
       while (read_index < 22 + count * size) {
-        const index = response.readUInt8(read_index);
+        const index = this.readInt64(response, read_index);
         indexes.push(index);
-        read_index += 8;
+
+        read_index += size;
       }
 
       return {
@@ -363,8 +367,15 @@ class rpcClient {
     return this._binSend('get_o_indexes.bin', buffer, parser);
   }
 
-  validate_bin_status (response) {
+  readInt64 (buffer, read_index) {
+    const sub = buffer.slice(read_index, read_index + 8);
 
+    const high2 = sub.readUInt32LE(0);
+    const low2  = sub.readUInt32LE(4);
+
+    const long  =  new Long(high2, low2);
+
+    return long.toString();
   }
 
   /**
