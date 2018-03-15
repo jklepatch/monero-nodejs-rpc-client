@@ -1,4 +1,6 @@
+/* @flow */
 const net = require('net');
+const Long = require('long');
 const request = require('request');
 
 /**
@@ -46,7 +48,9 @@ class rpcClient {
        * Some others follow another calling convention (second branch of the if);
        */
       try {
-        req = isJSONRPC ? this._buildJSONRPCReq(method, params) : this._buildOtherRPCReq(method, params)
+
+        req = isJSONRPC ? this._buildJSONRPCReq(method, params) : this._buildOtherRPCReq(method, params);
+
       }
       catch (err) {
         return reject(err);
@@ -55,7 +59,60 @@ class rpcClient {
         if (err) { return reject(err); }
         if (!this.deserializeJSON) { return resolve(data); }
         try {
-          return resolve(JSON.parse(data))
+          let res = {};
+
+          res = JSON.parse(data);
+
+
+          if (res.status === 'Failed') {
+            reject(new Error(res.reason));
+          } else {
+            resolve(res);
+          }
+        }
+        catch (err) {
+          reject(err);
+        }
+      });
+    });
+  }
+
+   /**
+   * @function _binSend
+   * @description Send a binary request to the daemon
+   * @private
+   * @param {string} method - the name of the RPC method
+   * @param {object|array} params - Parameters to be passed to the RPC method
+   * @returns {Promise} - A Promise which is resolved if the request succesfully
+   *                      fetch the data, and rejected otherwise. Failure can happen
+   *                      either because of a problem of the request, or before the
+   *                      request happen, when `JSON.stringify` fails
+   */
+  _binSend (method, params = undefined, responseParser = (res) => res) {
+    return new Promise((resolve, reject) =>  {
+      var req = {};
+
+      /**
+       * Some RPC method follows JSON RPC calling conventions (first branch of the if)
+       * Some others follow another calling convention (second branch of the if);
+       */
+      try {
+        req = this._buildBinRPCReq(method, params);
+      }
+      catch (err) {
+        return reject(err);
+      }
+      request.post(req, (err, req, data) => {
+        if (err) { return reject(err); }
+        if (!this.deserializeJSON) { return resolve(data); }
+        try {
+          const res = responseParser(data);
+
+          if (res.status === 'Failed') {
+            reject(new Error(res.reason));
+          } else {
+            resolve(res);
+          }
         }
         catch (err) {
           reject(err);
@@ -93,6 +150,20 @@ class rpcClient {
     if (typeof params === 'undefined') { return req; }
     try {
       req.body = JSON.stringify(params);
+      return req;
+    }
+    catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  _buildBinRPCReq (method, params) {
+    const req = {};
+    req.url = `${this.nodeAddress}/${method}`;
+    req.encoding = null;
+    if (typeof params === 'undefined') { return req; }
+    try {
+      req.body = params;
       return req;
     }
     catch (err) {
@@ -254,6 +325,59 @@ class rpcClient {
     return this._send('get_output_histogram', params);
   }
 
+
+  get_tx_outputs_gindexs (txid) {
+    const buffer = Buffer.allocUnsafe(50);
+
+    buffer.writeUInt32LE(16847105, 0);
+    buffer.writeUInt32LE(16908545, 4);
+    buffer.writeUInt8(1, 8);// Signature
+
+    buffer.writeUInt8(4, 9); // Type short XOR amount of params = Monero's Magic
+    buffer.writeUInt8(4, 10);
+
+    buffer.write("txid", 11);
+    buffer.writeUInt8(10, 15);
+    buffer.writeUInt8(128, 16);
+    buffer.write(txid, 17, "hex");
+
+    const parser = (response) => {
+      // Over simplified
+      const status = response.toString('ascii', response.length - 2, response.length);
+
+      const indexes = [];
+      let read_index = 22;
+      const count = response.readUInt8(21) >> 2;
+      const size = 8;
+
+      read_index = 22;
+      while (read_index < 22 + count * size) {
+        const index = this.readInt64(response, read_index);
+        indexes.push(index);
+
+        read_index += size;
+      }
+
+      return {
+        status,
+        indexes
+      };
+    };
+
+    return this._binSend('get_o_indexes.bin', buffer, parser);
+  }
+
+  readInt64 (buffer, read_index) {
+    const sub = buffer.slice(read_index, read_index + 8);
+
+    const high2 = sub.readUInt32LE(0);
+    const low2  = sub.readUInt32LE(4);
+
+    const long  =  new Long(high2, low2);
+
+    return long.toString();
+  }
+
   /**
    * @function getBlock
    * @description Full block information can be retrieved by
@@ -334,6 +458,35 @@ class rpcClient {
    */
   getInfo () {
     return this._send('get_info');
+  }
+
+  /**
+   * @function getFee
+   * @description Retrieve estimated fee of the network
+   * @returns {Promise} - Example:
+   *                      {
+   *                        "id": "0",
+   *                        "jsonrpc": "2.0",
+   *                        "result": {
+   *                          "alt_blocks_count": 5,
+   *                          "difficulty": 5250,
+   *                          "grey_peerlist_size": 2280,
+   *                          "height": 993145,
+   *                          "incoming_connections_count": 0,
+   *                          "outgoing_connections_count": 8,
+   *                          "status": "OK",
+   *                          "target": 60,
+   *                          "target_height": 993137,
+   *                          "testnet": false,
+   *                          "top_block_hash": "",
+   *                          "tx_count": 564287,
+   *                          "tx_pool_size": 45,
+   *                          "white_peerlist_size": 529
+   *                         }
+   *                       }
+   */
+  getFee () {
+    return this._send('get_fee_estimate');
   }
 
   /**
